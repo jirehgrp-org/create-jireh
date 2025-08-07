@@ -1,14 +1,24 @@
 {
   "name": "create-jireh",
   "version": "0.1.0",
-  "bin": {
-    "create-jireh": "dist/index.js"
-  },
+  "description": "Scaffold frontend apps from Jireh templates (Next.js, React+Vite, Vanilla, etc.)",
+  "bin": { "create-jireh": "dist/index.js" },
   "type": "module",
+  "files": ["dist"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -w"
   },
+  "keywords": ["scaffold", "cli", "templates", "vite", "nextjs", "react", "vanilla"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jirehgrp-org/create-jireh.git"
+  },
+  "bugs": { "url": "https://github.com/jirehgrp-org/create-jireh/issues" },
+  "homepage": "https://github.com/jirehgrp-org/create-jireh#readme",
+  "publishConfig": { "access": "public" },
+  "preferGlobal": true,
+  "engines": { "node": ">=18" },
   "dependencies": {
     "degit": "^2.8.4",
     "execa": "^9.3.0",
@@ -17,13 +27,11 @@
     "ora": "^8.0.1",
     "prompts": "^2.4.2"
   },
-  "engines": {
-    "node": ">=18"
-  },
   "devDependencies": {
     "@types/degit": "^2.8.6",
     "@types/minimist": "^1.2.5",
     "@types/node": "^24.2.0",
-    "@types/prompts": "^2.4.9"
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.5.0"
   }
 }
