@@ -30,10 +30,10 @@ export async function finalizeProject(
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
   }
 
-  if (opts.git) {
-    await execa("git", ["init"], { cwd: dest });
+  if (opts.git && !fs.existsSync(path.join(dest, ".git"))) {
+    await execa("git", ["init", "-b", "main"], { cwd: dest });
     await execa("git", ["add", "-A"], { cwd: dest });
-    await execa("git", ["commit", "-m", "init: scaffold with create-jireh"], { cwd: dest })
+    await execa("git", ["commit", "-m", "chore: initial scaffold with create-jireh"], { cwd: dest })
       .catch(() => {});
   }
 
