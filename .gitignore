@@ -1,3 +1,9 @@
++# Always include the changelog
++!CHANGELOG.md
+
+# Output of 'yarn debug'
+yarn-error.log
+
 # Logs
 logs
 *.log
