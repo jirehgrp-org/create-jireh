@@ -12,56 +12,72 @@ import { finalizeProject } from "./postInstall.js";
 import kleur from "kleur";
 
 const argv = minimist(process.argv.slice(2), {
-    string: ["template", "name", "tag", "dir", "pm"],
-    boolean: ["install", "git", "yes"],
-    default: { install: undefined, git: undefined }
+  string: ["template", "name", "tag", "dir", "pm"],
+  boolean: ["install", "git", "yes"],
+  default: { install: undefined, git: undefined },
 });
 
-
 (async () => {
-    const answers = await ask({
-        name: argv.name,
-        templateKey: argv.template as any,
-        install: argv.install,
-        git: argv.git
-    });
+  const answers = await ask({
+    name: argv.name,
+    templateKey: argv.template as any,
+    install: argv.install,
+    git: argv.git,
+  });
 
-    const dest = path.resolve(process.cwd(), argv.dir ?? answers.name);
-    if (fs.existsSync(dest) && fs.readdirSync(dest).length > 0) {
-        if (!argv.yes) {
-            console.error(kleur.red(`\nTarget directory not empty: ${dest}\nUse --yes to continue.\n`));
-            process.exit(1);
-        }
+  const dest = path.resolve(process.cwd(), argv.dir ?? answers.name);
+
+  if (fs.existsSync(dest) && fs.readdirSync(dest).length > 0) {
+    if (!argv.yes) {
+      console.error(kleur.red(`\nError: Target directory '${dest}' is not empty.`));
+      console.log(kleur.yellow(`\nTip: Re-run with ${kleur.bold("--yes")} to overwrite, or choose an empty folder.\n`));
+      process.exit(1);
     }
-    fs.mkdirSync(dest, { recursive: true });
+  }
+  fs.mkdirSync(dest, { recursive: true });
 
+  const entry = registry[answers.templateKey];
+  const repoRef = argv.tag ? `${entry.repo.split("#")[0]}#${argv.tag}` : entry.repo;
 
-    const entry = registry[answers.templateKey];
-    const repoRef = argv.tag ? `${entry.repo.split("#")[0]}#${argv.tag}` : entry.repo;
+  const spin = ora(`Fetching ${entry.label} ...`).start();
+  try {
+    await copyTemplate(repoRef, entry.subdir, dest);
+    spin.succeed("Template copied");
+  } catch (e) {
+    spin.fail("Failed to fetch template");
+    console.error(e);
+    process.exit(1);
+  }
 
-    const spin = ora(`Fetching ${entry.label} ...`).start();
-    try {
-        await copyTemplate(repoRef, entry.subdir, dest);
-        spin.succeed("Template copied");
-    } catch (e) {
-        spin.fail("Failed to fetch template");
-        console.error(e);
-        process.exit(1);
-    }
+  const hasPackageJson = fs.existsSync(path.join(dest, "package.json"));
 
-    await finalizeProject(dest, answers.name, {
-        install: !!answers.install,
-        git: !!answers.git,
-        pm: (argv.pm as "npm" | "yarn" | "pnpm" | "bun" | undefined)
-    });
+  await finalizeProject(dest, answers.name, {
+    install: hasPackageJson ? !!answers.install : false, // skip install for static templates
+    git: !!answers.git,
+    pm: (argv.pm as "npm" | "yarn" | "pnpm" | "bun" | undefined),
+  });
 
-    console.log(
-        `\n${kleur.bold("Done!")} Created ${kleur.cyan(answers.name)} at ${kleur.gray(dest)}`
-    );
-    console.log(`\nNext steps:`);
-    console.log(`  cd ${answers.name}`);
-    if (!answers.install) console.log(`  npm install`);
-    console.log(`  npm run dev\n`);
-    
-    process.exit(0);
+  console.log(`\n${kleur.bold("Done!")} Created ${kleur.cyan(answers.name)} at ${kleur.gray(dest)}\n`);
+  console.log(kleur.bold("Next steps:"));
+  console.log(`  cd ${answers.name}`);
+
+  if (hasPackageJson) {
+    const pm = (argv.pm || "npm") as "npm" | "yarn" | "pnpm" | "bun";
+    const commands: Record<typeof pm, [string, string]> = {
+      npm: ["npm install", "npm run dev"],
+      yarn: ["yarn install", "yarn dev"],
+      pnpm: ["pnpm install", "pnpm dev"],
+      bun: ["bun install", "bun dev"],
+    };
+
+    const [installCmd, devCmd] = commands[pm] || commands.npm;
+
+    if (!answers.install) console.log(`  ${installCmd}`);
+    console.log(`  ${devCmd}\n`);
+  } else {
+    console.log(`  Open ${kleur.cyan("index.html")} in your browser.`);
+    console.log(`  Or serve locally:\n    - live-server\n    - python3 -m http.server\n`);
+  }
+
+  process.exit(0);
 })();

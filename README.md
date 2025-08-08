@@ -8,13 +8,42 @@ Supports **Next.js**, **React + Vite**, **Vue 3 + Vite**, **SvelteKit + Vite**, 
 
 ## Features
 
-* **Interactive CLI** — Choose project name, framework, language variant, install dependencies, and initialize Git.
-* **Multiple Frameworks** — Next.js, React (Vite), Vue 3 (Vite), SvelteKit (Vite), Vanilla JS/TS (+ Vite).
-* **Multilingual Ready** — Amharic 🇪🇹 + English 🇺🇸 toggle included in most templates.
-* **Theme Toggle** — Dark/Light mode out of the box.
-* **Multiple Package Managers** — Works with **npm**, **yarn**, **pnpm**, and **bun**.
-* **Git Integration** — Optional `git init` with first commit.
-* **Direct Template Fetching** — Downloads templates straight from our GitHub repo via [degit](https://github.com/Rich-Harris/degit).
+- **Interactive CLI** — Choose project name, framework, language variant, install dependencies, and initialize Git.
+- **Multiple Frameworks** — Next.js, React (Vite), Vue 3 (Vite), SvelteKit (Vite), Vanilla JS/TS (+ Vite).
+- **Multilingual Ready** — Amharic 🇪🇹 + English 🇺🇸 toggle included in most templates.
+- **Theme Toggle** — Dark/Light mode out of the box.
+- **Multiple Package Managers** — Works with **npm**, **yarn**, **pnpm**, and **bun**.
+- **Git Integration** — Optional `git init` with first commit.
+- **Direct Template Fetching** — Downloads templates straight from our GitHub repo via [degit](https://github.com/Rich-Harris/degit).
+
+---
+
+## Getting Started
+
+Pick your favorite package manager:
+
+```bash
+# npm
+npx create-jireh@latest
+
+# yarn (classic)
+yarn create jireh
+
+# pnpm
+pnpm dlx create-jireh
+
+# bun
+bunx create-jireh
+```
+
+Follow the prompts:
+
+1. **Project Name** — Added to `package.json` (when present).
+2. **Template** — Pick a framework + JS/TS.
+3. **Install Dependencies?** — Automatically runs with your package manager.
+4. **Initialize Git?** — Optional first commit.
+
+> For **static templates** (Vanilla JS/TS without Vite), the CLI will skip install and show how to open/run the project (e.g., open `index.html` or use `live-server` / `python3 -m http.server`).
 
 ---
 
@@ -36,26 +65,6 @@ create-jireh/
 
 ---
 
-## Getting Started
-
-```bash
-# Using npx
-npx create-jireh
-
-# Or install globally
-npm install -g create-jireh
-create-jireh
-```
-
-Follow the prompts:
-
-1. **Project Name** — Added to `package.json`.
-2. **Template** — Pick a framework + JS/TS.
-3. **Install Dependencies?** — Select your package manager.
-4. **Initialize Git?** — Optional first commit.
-
----
-
 ## Template Source
 
 All templates are stored in:
@@ -68,12 +77,12 @@ Each CLI option maps to a subfolder inside `templates/` (see [`registry.ts`](src
 
 ## Package Manager Support
 
-* npm
-* yarn
-* pnpm
-* bun
+The CLI detects or allows you to choose a package manager and prints the **correct next steps**:
 
-The CLI detects or allows you to choose, then runs the correct install command.
+* **npm** → `npm install` → `npm run dev`
+* **yarn** → `yarn install` → `yarn dev`
+* **pnpm** → `pnpm install` → `pnpm dev`
+* **bun** → `bun install` → `bun dev`
 
 ---
 
