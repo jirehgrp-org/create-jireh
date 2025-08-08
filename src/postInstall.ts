@@ -4,7 +4,6 @@ import { execa } from "execa";
 import fs from "node:fs";
 import path from "node:path";
 
-// postInstall.ts
 function detectPM(explicit?: string) {
   if (explicit) return explicit;
   const ua = process.env.npm_config_user_agent || "";
@@ -22,7 +21,6 @@ export async function finalizeProject(
   const pkgPath = path.join(dest, "package.json");
   if (fs.existsSync(pkgPath)) {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-    // sanitize npm name
     const safe = name
       .trim()
       .toLowerCase()
