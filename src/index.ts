@@ -62,4 +62,6 @@ const argv = minimist(process.argv.slice(2), {
     console.log(`  cd ${answers.name}`);
     if (!answers.install) console.log(`  npm install`);
     console.log(`  npm run dev\n`);
+    
+    process.exit(0);
 })();
