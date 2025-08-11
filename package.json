@@ -1,6 +1,6 @@
 {
   "name": "create-jireh",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Scaffold frontend apps from Jireh templates (Next.js, React+Vite, Vanilla, etc.)",
   "bin": {
     "create-jireh": "dist/index.js",
