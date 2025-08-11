@@ -5,6 +5,7 @@
   "bin": {
     "create-jireh": "dist/index.js"
   },
+  "license": "MIT",
   "type": "module",
   "files": [
     "dist"
