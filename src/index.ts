@@ -9,7 +9,7 @@ import { ask } from "./prompts.js";
 import { registry } from "./registry.js";
 import { copyTemplate } from "./fetchTemplate.js";
 import { finalizeProject } from "./postInstall.js";
-import { printTree } from "./tree.js";
+import { writeTreeToFile } from "./tree.js";
 import kleur from "kleur";
 
 const argv = minimist(process.argv.slice(2), {
@@ -19,16 +19,13 @@ const argv = minimist(process.argv.slice(2), {
 });
 
 (async () => {
-  // If tree flag is present, just print tree and exit
   if (argv.tree) {
     const dirToPrint = path.resolve(process.cwd(), argv.dir || ".");
-    console.log(kleur.bold(`\nProject structure for: ${dirToPrint}\n`));
-    printTree(dirToPrint, "", { ignore: ["node_modules", ".git"] });
-    console.log("");
+    console.log(kleur.bold(`\nGenerating project structure for: ${dirToPrint}\n`));
+    const structureFilePath = writeTreeToFile(dirToPrint);  // no ignoreFileName now
+    console.log(kleur.green(`Project structure saved to: ${structureFilePath}\n`));
     process.exit(0);
   }
-
-  // Normal scaffolding flow below
 
   const answers = await ask({
     name: argv.name,
