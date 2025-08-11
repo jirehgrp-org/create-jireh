@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/jirehgrp-org/create-jireh/compare/v0.1.1...v0.1.2) (2025-08-11)
+
+
+### Features
+
+* add tree view feature and integrate into CLI entry point ([40ead6d](https://github.com/jirehgrp-org/create-jireh/commit/40ead6de46944d3499d1a19e21af5a58ed0734a9))
+* added git initialization feature ([ae40bb9](https://github.com/jirehgrp-org/create-jireh/commit/ae40bb9f6050c8787dc7e9e2db18518dd260a210))
+
 ### 0.1.1 (2025-08-08)
 
 
