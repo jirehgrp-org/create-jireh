@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/jirehgrp-org/create-jireh/compare/v0.1.2...v0.2.0) (2025-08-11)
+
+
+### Features
+
+* add recursive directory tree printing with folder/file sorting and ignore support ([f57c930](https://github.com/jirehgrp-org/create-jireh/commit/f57c93021528055f7797a57d94b3c395457d7638))
+
 ### [0.1.2](https://github.com/jirehgrp-org/create-jireh/compare/v0.1.1...v0.1.2) (2025-08-11)
 
 
