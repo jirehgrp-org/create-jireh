@@ -2,23 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## v0.2.4 – Bug fixes and improvements
-
-### Features
-
-- Added project name as root folder in tree output.
-- Snippet output in terminal when tree is long.
-- Preserved existing structure.txt behavior with project_structure.txt fallback.
-
-### Bug Fixes
-
-- Fixed tree output formatting for single-folder projects.
-- Improved CLI user experience and error handling.
-
-### Full changelog
-
-[CHANGELOG.md](https://github.com/jirehgrp-org/create-jireh/blob/main/CHANGELOG.md)
-
+### [0.2.6](https://github.com/jirehgrp-org/create-jireh/compare/v0.2.5...v0.2.6) (2025-08-11)
 
 ## [0.2.1](https://github.com/jirehgrp-org/create-jireh/compare/v0.1.2...v0.2.0) (2025-08-11)
 
