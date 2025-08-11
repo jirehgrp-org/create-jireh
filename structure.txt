@@ -1,0 +1,15 @@
+create-jireh/
+├── src/
+│   ├── fetchTemplate.ts
+│   ├── index.ts
+│   ├── postInstall.ts
+│   ├── prompts.ts
+│   ├── registry.ts
+│   └── tree.ts
+├── .gitignore
+├── CHANGELOG.md
+├── LICENSE
+├── package.json
+├── README.md
+├── structure.txt
+└── tsconfig.json

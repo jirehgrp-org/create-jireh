@@ -5,73 +5,84 @@ import path from 'path';
 import kleur from 'kleur';
 
 export interface TreeOptions {
-    ignore?: string[];
+  ignore?: string[];
+  color?: boolean;
 }
 
 function loadIgnoreList(): string[] {
-    return [
-        // Node.js & general
-        'node_modules', '.git', 'dist', 'build', 'out', 'coverage', '.cache', '.parcel-cache',
-        'npm-debug.log', 'yarn-error.log', 'pnpm-debug.log',
-        '.DS_Store', 'Thumbs.db',
-        // Python
-        '__pycache__', '*.py[cod]', '*.egg-info', '.pytest_cache', '.mypy_cache',
-        // Ruby/Rails
-        'log', 'tmp', 'vendor/bundle', '.byebug_history',
-        // Laravel / PHP
-        'vendor', '.env', '.env.*', 'storage',
-        // Django
-        'db.sqlite3', 'media',
-        // Java
-        'target', '*.class', '*.jar', '*.war', '*.ear',
-        // VSCode and IDEs
-        '.vscode', '.idea', '*.iml',
-        // Misc
-        '*.log',
-    ];
+  return [
+    'node_modules', '.git', 'dist', 'build', 'out', 'coverage', '.cache', '.parcel-cache',
+    'npm-debug.log', 'yarn-error.log', 'pnpm-debug.log', 'package-lock.json',
+    '.DS_Store', 'Thumbs.db',
+    '.next',
+    '__pycache__', '*.py[cod]', '*.egg-info', '.pytest_cache', '.mypy_cache',
+    'log', 'tmp', 'vendor/bundle', '.byebug_history',
+    'vendor', '.env', '.env.*', 'storage',
+    'db.sqlite3', 'media',
+    'target', '*.class', '*.jar', '*.war', '*.ear',
+    '.vscode', '.idea', '*.iml',
+    '*.log',
+  ];
 }
 
 function buildTreeString(
-    dirPath: string,
-    prefix = '',
-    options: TreeOptions = {}
+  dirPath: string,
+  prefix = '',
+  options: TreeOptions = {}
 ): string {
-    // Use passed ignore list or default hardcoded list
-    const ignoreList = options.ignore || loadIgnoreList();
+  const ignoreList = options.ignore || loadIgnoreList();
+  const useColor = options.color !== false;  // default true
 
-    const entries = fs.readdirSync(dirPath, { withFileTypes: true })
-        .filter(item => !ignoreList.includes(item.name));
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true })
+    .filter(item => !ignoreList.includes(item.name));
 
-    const dirs = entries.filter(e => e.isDirectory()).sort((a, b) => a.name.localeCompare(b.name));
-    const files = entries.filter(e => !e.isDirectory()).sort((a, b) => a.name.localeCompare(b.name));
-    const items = [...dirs, ...files];
+  const dirs = entries.filter(e => e.isDirectory()).sort((a, b) => a.name.localeCompare(b.name));
+  const files = entries.filter(e => !e.isDirectory()).sort((a, b) => a.name.localeCompare(b.name));
+  const items = [...dirs, ...files];
 
-    let treeString = '';
+  let treeString = '';
 
-    items.forEach((item, index) => {
-        const isLast = index === items.length - 1;
-        const connector = isLast ? '└── ' : '├── ';
-        const name = item.isDirectory()
-            ? kleur.cyan(item.name + '/').toString()
-            : kleur.white(item.name).toString();
+  items.forEach((item, index) => {
+    const isLast = index === items.length - 1;
+    const connector = isLast ? '└── ' : '├── ';
+    let name = item.name + (item.isDirectory() ? '/' : '');
 
-        treeString += prefix + connector + name + '\n';
+    if (useColor) {
+      name = item.isDirectory() ? kleur.cyan(name).toString() : kleur.white(name).toString();
+    }
 
-        if (item.isDirectory()) {
-            const newPrefix = prefix + (isLast ? '    ' : '│   ');
-            treeString += buildTreeString(path.join(dirPath, item.name), newPrefix, options);
-        }
-    });
+    treeString += prefix + connector + name + '\n';
 
-    return treeString;
+    if (item.isDirectory()) {
+      const newPrefix = prefix + (isLast ? '    ' : '│   ');
+      treeString += buildTreeString(path.join(dirPath, item.name), newPrefix, options);
+    }
+  });
+
+  return treeString;
 }
 
 export function writeTreeToFile(
-    dirPath: string,
-    options: TreeOptions = {}
+  dirPath: string,
+  options: TreeOptions = {}
 ): string {
-    const treeString = buildTreeString(dirPath, '', options);
-    const filePath = path.join(dirPath, 'structure.txt');
-    fs.writeFileSync(filePath, treeString);
-    return filePath;
+  // force color false for file output
+  const treeString = buildTreeString(dirPath, '', { ...options, color: false });
+
+  const structurePath = path.join(dirPath, 'structure.txt');
+  const projectStructurePath = path.join(dirPath, 'project_structure.txt');
+
+  let filePathToWrite: string;
+
+  if (fs.existsSync(structurePath)) {
+    filePathToWrite = projectStructurePath;
+  } else {
+    filePathToWrite = structurePath;
+  }
+
+  fs.writeFileSync(filePathToWrite, treeString);
+
+  return filePathToWrite;
 }
+
+export { buildTreeString };

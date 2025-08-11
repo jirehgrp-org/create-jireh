@@ -4,13 +4,13 @@
 import path from "node:path";
 import fs from "node:fs";
 import minimist from "minimist";
+import kleur from "kleur";
 import ora from "ora";
 import { ask } from "./prompts.js";
 import { registry } from "./registry.js";
 import { copyTemplate } from "./fetchTemplate.js";
 import { finalizeProject } from "./postInstall.js";
-import { writeTreeToFile } from "./tree.js";
-import kleur from "kleur";
+import { buildTreeString, writeTreeToFile } from "./tree.js"
 
 const argv = minimist(process.argv.slice(2), {
   string: ["template", "name", "tag", "dir", "pm"],
@@ -18,14 +18,58 @@ const argv = minimist(process.argv.slice(2), {
   default: { install: undefined, git: undefined, tree: false },
 });
 
+function getProjectName(dir: string): string {
+  try {
+    const pkgJsonPath = path.join(dir, "package.json");
+    if (fs.existsSync(pkgJsonPath)) {
+      const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
+      if (pkg.name) return pkg.name;
+    }
+  } catch {
+    // ignore error and fallback below
+  }
+  return path.basename(dir);
+}
+
+function prefixTreeWithRootName(treeStr: string, rootName: string): string {
+  const indent = '│   ';
+  const lines = treeStr.split('\n').filter(Boolean);
+  const indentedLines = lines.map(line => indent + line);
+  return `${rootName}/\n${indentedLines.join('\n')}\n`;
+}
+
 (async () => {
   if (argv.tree) {
     const dirToPrint = path.resolve(process.cwd(), argv.dir || ".");
-    console.log(kleur.bold(`\nGenerating project structure for: ${dirToPrint}\n`));
-    const structureFilePath = writeTreeToFile(dirToPrint);
-    console.log(kleur.green(`Project structure saved to: ${structureFilePath}\n`));
+    const rootName = getProjectName(dirToPrint);
+    const fullTreeColored = buildTreeString(dirToPrint, '', { color: true });
+
+    console.log(kleur.bold(`\nProject structure for: ${dirToPrint}`));
+    console.log(kleur.bold(`Generating project structure for: ${dirToPrint}\n`));
+
+    const treeWithRoot = `${rootName}/\n${fullTreeColored}`;
+    const treeLines = treeWithRoot.trim().split('\n');
+    const snippetLimit = 30;
+    if (treeLines.length > snippetLimit) {
+      console.log(treeLines.slice(0, snippetLimit).join('\n'));
+      console.log(kleur.gray(`\n...snipped ${treeLines.length - snippetLimit} lines...\n`));
+    } else {
+      console.log(treeWithRoot);
+    }
+
+    const structurePath = path.join(dirToPrint, 'structure.txt');
+    const projectStructurePath = path.join(dirToPrint, 'project_structure.txt');
+    const filePathToWrite = fs.existsSync(structurePath) ? projectStructurePath : structurePath;
+    const plainTree = buildTreeString(dirToPrint, '', { color: false });
+    const plainWithRoot = `${rootName}/\n${plainTree}`;
+
+    fs.writeFileSync(filePathToWrite, plainWithRoot);
+
+    console.log(kleur.green(`Project structure mapped and written.`));
+    console.log(kleur.green(`Check it out at: ${filePathToWrite}\n`));
     process.exit(0);
   }
+
 
   const answers = await ask({
     name: argv.name,

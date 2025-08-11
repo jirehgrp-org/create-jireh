@@ -28,21 +28,25 @@ Pick your favorite package manager:
 npx create-jireh@latest
 # or use the short alias
 npx jirehgrp@latest
+npx jireh@latest
 
 # yarn (classic)
 yarn create jireh
 # or
 yarn dlx jirehgrp
+yarn dlx jireh
 
 # pnpm
 pnpm dlx create-jireh
 # or
 pnpm dlx jirehgrp
+pnpm dlx jireh
 
 # bun
 bunx create-jireh
 # or
 bunx jirehgrp
+bunx jireh
 ```
 
 Follow the prompts:
