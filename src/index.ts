@@ -9,11 +9,12 @@ import { ask } from "./prompts.js";
 import { registry } from "./registry.js";
 import { copyTemplate } from "./fetchTemplate.js";
 import { finalizeProject } from "./postInstall.js";
+import { printTree } from "./tree.js";
 import kleur from "kleur";
 
 const argv = minimist(process.argv.slice(2), {
   string: ["template", "name", "tag", "dir", "pm"],
-  boolean: ["install", "git", "yes"],
+  boolean: ["install", "git", "yes", "tree"], // 👈 added tree flag
   default: { install: undefined, git: undefined },
 });
 
@@ -30,7 +31,11 @@ const argv = minimist(process.argv.slice(2), {
   if (fs.existsSync(dest) && fs.readdirSync(dest).length > 0) {
     if (!argv.yes) {
       console.error(kleur.red(`\nError: Target directory '${dest}' is not empty.`));
-      console.log(kleur.yellow(`\nTip: Re-run with ${kleur.bold("--yes")} to overwrite, or choose an empty folder.\n`));
+      console.log(
+        kleur.yellow(
+          `\nTip: Re-run with ${kleur.bold("--yes")} to overwrite, or choose an empty folder.\n`
+        )
+      );
       process.exit(1);
     }
   }
@@ -52,7 +57,7 @@ const argv = minimist(process.argv.slice(2), {
   const hasPackageJson = fs.existsSync(path.join(dest, "package.json"));
 
   await finalizeProject(dest, answers.name, {
-    install: hasPackageJson ? !!answers.install : false, // skip install for static templates
+    install: hasPackageJson ? !!answers.install : false,
     git: !!answers.git,
     pm: (argv.pm as "npm" | "yarn" | "pnpm" | "bun" | undefined),
   });
@@ -77,6 +82,12 @@ const argv = minimist(process.argv.slice(2), {
   } else {
     console.log(`  Open ${kleur.cyan("index.html")} in your browser.`);
     console.log(`  Or serve locally:\n    - live-server\n    - python3 -m http.server\n`);
+  }
+
+  if (argv.tree) {
+    console.log(kleur.bold("\nProject structure:\n"));
+    printTree(dest, "", { ignore: ["node_modules", ".git"] });
+    console.log("");
   }
 
   process.exit(0);
