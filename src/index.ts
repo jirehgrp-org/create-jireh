@@ -15,10 +15,21 @@ import kleur from "kleur";
 const argv = minimist(process.argv.slice(2), {
   string: ["template", "name", "tag", "dir", "pm"],
   boolean: ["install", "git", "yes", "tree"],
-  default: { install: undefined, git: undefined },
+  default: { install: undefined, git: undefined, tree: false },
 });
 
 (async () => {
+  // If tree flag is present, just print tree and exit
+  if (argv.tree) {
+    const dirToPrint = path.resolve(process.cwd(), argv.dir || ".");
+    console.log(kleur.bold(`\nProject structure for: ${dirToPrint}\n`));
+    printTree(dirToPrint, "", { ignore: ["node_modules", ".git"] });
+    console.log("");
+    process.exit(0);
+  }
+
+  // Normal scaffolding flow below
+
   const answers = await ask({
     name: argv.name,
     templateKey: argv.template as any,
@@ -82,12 +93,6 @@ const argv = minimist(process.argv.slice(2), {
   } else {
     console.log(`  Open ${kleur.cyan("index.html")} in your browser.`);
     console.log(`  Or serve locally:\n    - live-server\n    - python3 -m http.server\n`);
-  }
-
-  if (argv.tree) {
-    console.log(kleur.bold("\nProject structure:\n"));
-    printTree(dest, "", { ignore: ["node_modules", ".git"] });
-    console.log("");
   }
 
   process.exit(0);
