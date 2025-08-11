@@ -3,6 +3,7 @@
   "version": "0.2.2",
   "description": "Scaffold frontend apps from Jireh templates (Next.js, React+Vite, Vanilla, etc.)",
   "bin": {
+    "jirehgrp": "dist/index.js",
     "create-jireh": "dist/index.js"
   },
   "license": "MIT",
@@ -19,13 +20,32 @@
     "tree": "ts-node test-tree.ts"
   },
   "keywords": [
+    "multilingual",
+    "amharic",
     "scaffold",
     "cli",
+    "frontend",
+    "starter",
+    "boilerplate",
     "templates",
     "vite",
     "nextjs",
     "react",
-    "vanilla"
+    "vue",
+    "vue3",
+    "svelte",
+    "sveltekit",
+    "vanilla",
+    "typescript",
+    "javascript",
+    "theme",
+    "dark mode",
+    "light mode",
+    "package manager",
+    "git",
+    "degit",
+    "project generator",
+    "tree"
   ],
   "repository": {
     "type": "git",

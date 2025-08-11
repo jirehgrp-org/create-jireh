@@ -22,7 +22,7 @@ const argv = minimist(process.argv.slice(2), {
   if (argv.tree) {
     const dirToPrint = path.resolve(process.cwd(), argv.dir || ".");
     console.log(kleur.bold(`\nGenerating project structure for: ${dirToPrint}\n`));
-    const structureFilePath = writeTreeToFile(dirToPrint);  // no ignoreFileName now
+    const structureFilePath = writeTreeToFile(dirToPrint);
     console.log(kleur.green(`Project structure saved to: ${structureFilePath}\n`));
     process.exit(0);
   }
