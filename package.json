@@ -14,7 +14,8 @@
     "dev": "tsc -w",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major"
+    "release:major": "standard-version --release-as major",
+    "tree": "ts-node test-tree.ts"
   },
   "keywords": [
     "scaffold",
@@ -51,7 +52,7 @@
   "devDependencies": {
     "@types/degit": "^2.8.6",
     "@types/minimist": "^1.2.5",
-    "@types/node": "^24.2.0",
+    "@types/node": "^24.2.1",
     "@types/prompts": "^2.4.9",
     "standard-version": "^9.5.0",
     "typescript": "^5.5.0"

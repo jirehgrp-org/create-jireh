@@ -14,7 +14,7 @@ import kleur from "kleur";
 
 const argv = minimist(process.argv.slice(2), {
   string: ["template", "name", "tag", "dir", "pm"],
-  boolean: ["install", "git", "yes", "tree"], // 👈 added tree flag
+  boolean: ["install", "git", "yes", "tree"],
   default: { install: undefined, git: undefined },
 });
 
