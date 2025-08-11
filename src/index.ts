@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// src/index.ts
+// src/index.js
 
 import path from "node:path";
 import fs from "node:fs";
@@ -10,7 +10,7 @@ import { ask } from "./prompts.js";
 import { registry } from "./registry.js";
 import { copyTemplate } from "./fetchTemplate.js";
 import { finalizeProject } from "./postInstall.js";
-import { buildTreeString, writeTreeToFile } from "./tree.js"
+import { buildTreeString } from "./tree.js"
 
 const argv = minimist(process.argv.slice(2), {
   string: ["template", "name", "tag", "dir", "pm"],
@@ -29,13 +29,18 @@ function getProjectName(dir: string): string {
     // ignore error and fallback below
   }
   return path.basename(dir);
+
 }
 
-function prefixTreeWithRootName(treeStr: string, rootName: string): string {
-  const indent = '│   ';
-  const lines = treeStr.split('\n').filter(Boolean);
-  const indentedLines = lines.map(line => indent + line);
-  return `${rootName}/\n${indentedLines.join('\n')}\n`;
+function waitForEnter(): Promise<void> {
+  return new Promise((resolve) => {
+    process.stdout.write(`\nPress ENTER to continue...\n`);
+    process.stdin.resume();
+    process.stdin.once('data', () => {
+      process.stdin.pause();
+      resolve();
+    });
+  });
 }
 
 (async () => {
@@ -70,7 +75,20 @@ function prefixTreeWithRootName(treeStr: string, rootName: string): string {
     process.exit(0);
   }
 
+  console.warn(`
+⚠️  The create-jireh CLI is deprecated and will no longer receive updates.
 
+Please use the new CLI command instead:
+
+  npx jirehgrp
+
+See https://github.com/jirehgrp-org/jirehgrp-cli for details.
+
+`);
+
+  await waitForEnter();
+
+  // Continue with the rest of the script
   const answers = await ask({
     name: argv.name,
     templateKey: argv.template as any,

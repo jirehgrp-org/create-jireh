@@ -26,27 +26,15 @@ Pick your favorite package manager:
 ```bash
 # npm
 npx create-jireh@latest
-# or use the short alias
-npx jirehgrp@latest
-npx jireh@latest
 
 # yarn (classic)
 yarn create jireh
-# or
-yarn dlx jirehgrp
-yarn dlx jireh
 
 # pnpm
 pnpm dlx create-jireh
-# or
-pnpm dlx jirehgrp
-pnpm dlx jireh
 
 # bun
 bunx create-jireh
-# or
-bunx jirehgrp
-bunx jireh
 ```
 
 Follow the prompts:
@@ -83,8 +71,6 @@ Generate a tree view of an existing project directory without scaffolding a new 
 ```bash
 # Long form
 npx create-jireh --tree --dir ./path/to/project
-# Short form
-npx jirehgrp --tree --dir ./path/to/project
 ```
 
 This creates a `structure.txt` file inside the specified directory containing a colored, hierarchical listing of folders and files, ignoring common unwanted files/folders.
