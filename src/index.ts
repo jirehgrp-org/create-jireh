@@ -4,13 +4,14 @@
 import path from "node:path";
 import fs from "node:fs";
 import minimist from "minimist";
+import { spawn } from "node:child_process";
 import kleur from "kleur";
 import ora from "ora";
 import { ask } from "./prompts.js";
 import { registry } from "./registry.js";
 import { copyTemplate } from "./fetchTemplate.js";
 import { finalizeProject } from "./postInstall.js";
-import { buildTreeString } from "./tree.js"
+import { buildTreeString } from "./tree.js";
 
 const argv = minimist(process.argv.slice(2), {
   string: ["template", "name", "tag", "dir", "pm"],
@@ -18,25 +19,22 @@ const argv = minimist(process.argv.slice(2), {
   default: { install: undefined, git: undefined, tree: false },
 });
 
-function getProjectName(dir: string): string {
+function getProjectName(dir: string) {
   try {
     const pkgJsonPath = path.join(dir, "package.json");
     if (fs.existsSync(pkgJsonPath)) {
       const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
       if (pkg.name) return pkg.name;
     }
-  } catch {
-    // ignore error and fallback below
-  }
+  } catch { }
   return path.basename(dir);
-
 }
 
-function waitForEnter(): Promise<void> {
-  return new Promise((resolve) => {
+function waitForEnter() {
+  return new Promise<void>((resolve) => {
     process.stdout.write(`\nPress ENTER to continue...\n`);
     process.stdin.resume();
-    process.stdin.once('data', () => {
+    process.stdin.once("data", () => {
       process.stdin.pause();
       resolve();
     });
@@ -47,25 +45,25 @@ function waitForEnter(): Promise<void> {
   if (argv.tree) {
     const dirToPrint = path.resolve(process.cwd(), argv.dir || ".");
     const rootName = getProjectName(dirToPrint);
-    const fullTreeColored = buildTreeString(dirToPrint, '', { color: true });
+    const fullTreeColored = buildTreeString(dirToPrint, "", { color: true });
 
     console.log(kleur.bold(`\nProject structure for: ${dirToPrint}`));
     console.log(kleur.bold(`Generating project structure for: ${dirToPrint}\n`));
 
     const treeWithRoot = `${rootName}/\n${fullTreeColored}`;
-    const treeLines = treeWithRoot.trim().split('\n');
+    const treeLines = treeWithRoot.trim().split("\n");
     const snippetLimit = 30;
     if (treeLines.length > snippetLimit) {
-      console.log(treeLines.slice(0, snippetLimit).join('\n'));
+      console.log(treeLines.slice(0, snippetLimit).join("\n"));
       console.log(kleur.gray(`\n...snipped ${treeLines.length - snippetLimit} lines...\n`));
     } else {
       console.log(treeWithRoot);
     }
 
-    const structurePath = path.join(dirToPrint, 'structure.txt');
-    const projectStructurePath = path.join(dirToPrint, 'project_structure.txt');
+    const structurePath = path.join(dirToPrint, "structure.txt");
+    const projectStructurePath = path.join(dirToPrint, "project_structure.txt");
     const filePathToWrite = fs.existsSync(structurePath) ? projectStructurePath : structurePath;
-    const plainTree = buildTreeString(dirToPrint, '', { color: false });
+    const plainTree = buildTreeString(dirToPrint, "", { color: false });
     const plainWithRoot = `${rootName}/\n${plainTree}`;
 
     fs.writeFileSync(filePathToWrite, plainWithRoot);
@@ -76,22 +74,31 @@ function waitForEnter(): Promise<void> {
   }
 
   console.warn(`
-⚠️  The create-jireh CLI is deprecated and will no longer receive updates.
+${kleur.red("⚠️  The create-jireh CLI is deprecated")} and will no longer receive updates.
 
 Please use the new CLI command instead:
 
-  npx jirehgrp
+  ${kleur.cyan("npx jirehgrp")}
 
-See https://github.com/jirehgrp-org/jirehgrp-cli for details.
-
+See ${kleur.cyan("https://github.com/jirehgrp-org/jirehgrp-cli")} for details.
 `);
 
   await waitForEnter();
 
-  // Continue with the rest of the script
+  // Run jirehgrp CLI
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn("npx", ["jirehgrp", ...process.argv.slice(2)], {
+      stdio: "inherit",
+      shell: true,
+    });
+    child.on("exit", (code) => {
+      if (code !== 0) reject(new Error(`jirehgrp exited with code ${code}`));
+      else resolve();
+    });
+  });
   const answers = await ask({
     name: argv.name,
-    templateKey: argv.template as any,
+    templateKey: argv.template,
     install: argv.install,
     git: argv.git,
   });
@@ -129,7 +136,7 @@ See https://github.com/jirehgrp-org/jirehgrp-cli for details.
   await finalizeProject(dest, answers.name, {
     install: hasPackageJson ? !!answers.install : false,
     git: !!answers.git,
-    pm: (argv.pm as "npm" | "yarn" | "pnpm" | "bun" | undefined),
+    pm: argv.pm,
   });
 
   console.log(`\n${kleur.bold("Done!")} Created ${kleur.cyan(answers.name)} at ${kleur.gray(dest)}\n`);
@@ -138,7 +145,7 @@ See https://github.com/jirehgrp-org/jirehgrp-cli for details.
 
   if (hasPackageJson) {
     const pm = (argv.pm || "npm") as "npm" | "yarn" | "pnpm" | "bun";
-    const commands: Record<typeof pm, [string, string]> = {
+    const commands: Record<"npm" | "yarn" | "pnpm" | "bun", [string, string]> = {
       npm: ["npm install", "npm run dev"],
       yarn: ["yarn install", "yarn dev"],
       pnpm: ["pnpm install", "pnpm dev"],
@@ -146,7 +153,6 @@ See https://github.com/jirehgrp-org/jirehgrp-cli for details.
     };
 
     const [installCmd, devCmd] = commands[pm] || commands.npm;
-
     if (!answers.install) console.log(`  ${installCmd}`);
     console.log(`  ${devCmd}\n`);
   } else {

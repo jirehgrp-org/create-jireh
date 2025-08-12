@@ -1,4 +1,14 @@
-# create-jireh
+# ~~create-jireh~~
+
+> ⚠️ **Deprecated:** The `~~create-jireh~~` CLI is deprecated and will no longer receive updates.  
+> Please switch to the new CLI tool: [`jirehgrp`](https://github.com/jirehgrp-org/jirehgrp-cli)  
+>  
+> Use this instead:  
+> ```bash
+> npx jirehgrp
+> ```
+
+---
 
 A fast, interactive **CLI tool** for scaffolding frontend projects from the [Jireh Group Templates](https://github.com/jirehgrp-org/jirehgrp-templates) repository.
 
@@ -21,21 +31,21 @@ Supports **Next.js**, **React + Vite**, **Vue 3 + Vite**, **SvelteKit + Vite**, 
 
 ## Getting Started
 
-Pick your favorite package manager:
+Pick your favorite package manager and run the new CLI:
 
 ```bash
 # npm
-npx create-jireh@latest
+npx jirehgrp@latest
 
 # yarn (classic)
-yarn create jireh
+yarn create jirehgrp
 
 # pnpm
-pnpm dlx create-jireh
+pnpm dlx jirehgrp
 
 # bun
-bunx create-jireh
-```
+bunx jirehgrp
+````
 
 Follow the prompts:
 
@@ -70,7 +80,7 @@ Generate a tree view of an existing project directory without scaffolding a new 
 
 ```bash
 # Long form
-npx create-jireh --tree --dir ./path/to/project
+npx jirehgrp --tree --dir ./path/to/project
 ```
 
 This creates a `structure.txt` file inside the specified directory containing a colored, hierarchical listing of folders and files, ignoring common unwanted files/folders.
@@ -84,7 +94,7 @@ If the target directory exists and is **not empty**, the CLI will exit with an e
 Example:
 
 ```bash
-create-jireh --template nextjs --name myapp --yes
+jirehgrp --template nextjs --name myapp --yes
 ```
 
 ---
@@ -93,13 +103,13 @@ create-jireh --template nextjs --name myapp --yes
 
 ```bash
 # Scaffold a Next.js (TS) project, install deps, and initialize git
-npx create-jireh --template nextjs --install --git
+npx jirehgrp --template nextjs --install --git
 
 # Scaffold React + Vite TS project into ./my-app directory, overwrite if exists
-create-jireh --template react-vite/ts --name my-app --yes
+jirehgrp --template react-vite/ts --name my-app --yes
 
 # Generate a folder tree of an existing project directory
-create-jireh --tree --dir ./my-app
+jirehgrp --tree --dir ./my-app
 ```
 
 ---
@@ -107,7 +117,7 @@ create-jireh --tree --dir ./my-app
 ## Folder Structure
 
 ```plaintext
-create-jireh/
+~~create-jireh~~/
 ├── src/
 │   ├── fetchTemplate.ts    # Template fetching logic
 │   ├── index.ts            # CLI entry point
@@ -146,7 +156,7 @@ The CLI detects or allows you to choose a package manager and prints the **corre
 
 ## Requirements
 
-* **Node.js >= 18** is required to run create-jireh.
+* **Node.js >= 18** is required to run `~~create-jireh~~`.
 
 ---
 
@@ -163,7 +173,7 @@ The CLI detects or allows you to choose a package manager and prints the **corre
 
 ## Thank You
 
-Thank you to everyone who has downloaded and tried **create-jireh** so far! 🚀
+Thank you to everyone who has downloaded and tried **`~~create-jireh~~`** so far! 🚀
 
 We’re excited to see 650+ weekly downloads just days after launch — your support means a lot and motivates us to keep improving.
 
